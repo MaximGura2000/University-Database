@@ -1,6 +1,7 @@
 package src.entity;
 
 import java.util.*;
+import src.enums.StudentStatus;
 
 public class Student extends Person {
 
@@ -11,6 +12,7 @@ public class Student extends Person {
   Scanner sc = new Scanner(System.in);
   List<Subject> subjectList = new ArrayList<>();
   List<Teacher> teacherList = new ArrayList<>();
+  private StudentStatus studentStatus;
 
   public Student(String id, String name, String surname, Integer birthYear) {
     super(id, name, surname, birthYear, 0);
@@ -92,6 +94,7 @@ public class Student extends Person {
     System.out.println("src.entity.Ucitel byl odstranen od studenta!");
   }
 
+  // Get and Set start here
   public boolean isStipend() {
     return stipend;
   }
@@ -138,6 +141,14 @@ public class Student extends Person {
 
   public void setTeacherList(List<Teacher> teacherList) {
     this.teacherList = teacherList;
+  }
+
+  public StudentStatus getStudentStatus() {
+    return studentStatus;
+  }
+
+  public void setStudentStatus(StudentStatus studentStatus) {
+    this.studentStatus = studentStatus;
   }
 
   @Override

@@ -26,7 +26,7 @@ public class Teacher extends Person {
     studentList.add(newStudent);
   }
 
-  public void deleteStudent(int studentID) {
+  public void deleteStudent(String studentID) {
     for (Student student : studentList) {
       if (student.getId().equals(studentID)) {
         studentList.remove(student);

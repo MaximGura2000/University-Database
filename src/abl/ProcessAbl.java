@@ -1,10 +1,12 @@
 package src.abl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import src.entity.Person;
 import src.entity.Student;
 import src.entity.Teacher;
@@ -51,7 +53,7 @@ public class ProcessAbl {
       int choice = sc.nextInt();
       switch (choice) {
         case 1 : {
-          if (personMap.isEmpty() || personMap.containsValue(Teacher.class)) {
+          if (personMap.isEmpty() || personMap.entrySet().stream().anyMatch(Teacher.class::isInstance)) {
             LOGGER.info("You should add at least one teacher before you will add student.");
             break;
           }
@@ -77,7 +79,7 @@ public class ProcessAbl {
 
           int teacherId = -1;
 
-          while (!(personMap.containsKey(String.valueOf(teacherId)) && personMap.get(teacherId) instanceof Teacher)) {
+          while (!(personMap.containsKey(String.valueOf(teacherId)) && personMap.get(String.valueOf(teacherId)) instanceof Teacher)) {
             while (!sc.hasNextInt()) {
               sc.next();
             }
@@ -120,6 +122,40 @@ public class ProcessAbl {
 
           break;
         }
+        case 3 : {
+          LOGGER.info("Print person id to delete him.");
+
+          while (!sc.hasNextInt()) {
+            sc.next();
+          }
+          int removeID = sc.nextInt();
+
+          if (personMap.containsKey(String.valueOf(removeID))) {
+            Person personToDelete = personMap.get(String.valueOf(removeID));
+
+            List<String> idList = personToDelete instanceof Teacher ?
+                ((Teacher) personToDelete).getStudentList().stream().map(Student::getId).collect(Collectors.toList()) :
+                ((Student) personToDelete).getTeacherList().stream().map(Teacher::getId).collect(Collectors.toList());
+
+            if (personToDelete instanceof Teacher && !idList.isEmpty()) {
+              LOGGER.info("Could not delete teacher with students! Delete teacher from student first.");
+              break;
+            }
+
+            LOGGER.info("Delete info about person from another people.");
+            for (String id: idList) {
+              deleteStudentFromTeacher((Teacher) personMap.get(id), personToDelete.getId(), ((Student) personToDelete).isStipend());
+            }
+
+            // Remove person from personMap
+            personMap.remove(personToDelete.getId());
+            LOGGER.info("Person has successfully deleted");
+          } else {
+            LOGGER.info("No person with such id : " + removeID);
+          }
+
+          break;
+        }
         case 17 : {
           LOGGER.info("Ending university process.");
           endProcess = true;
@@ -142,5 +178,12 @@ public class ProcessAbl {
     }
 
     return id;
+  }
+
+  private void deleteStudentFromTeacher(Teacher teacher, String removeId, boolean stipend) {
+    teacher.deleteStudent(removeId);
+    if (stipend) {
+      teacher.setStudentsWithStipend(teacher.getStudentsWithStipend() - 1);
+    }
   }
 }

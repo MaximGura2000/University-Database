@@ -107,7 +107,7 @@ public class SubAppRunner {
 							}
 						} else if (databaze.get(removeID) instanceof Student) {
 							for (Teacher teachers : ((Student) databaze.get(removeID)).getTeacherList()) {
-								teachers.deleteStudent(removeID);
+								teachers.deleteStudent(String.valueOf(removeID));
 							}
 						}
 
@@ -252,7 +252,7 @@ public class SubAppRunner {
 						int IDUcitele = sc.nextInt();
 						if (databaze.containsKey(IDUcitele) && databaze.get(IDUcitele) instanceof Teacher) {
 							((Student) databaze.get(workID)).deleteTeacher(String.valueOf(IDUcitele));
-							((Teacher) databaze.get(IDUcitele)).deleteStudent(workID);
+							((Teacher) databaze.get(IDUcitele)).deleteStudent(String.valueOf(workID));
 						} else {
 							System.out.println("src.entity.Ucitel nebyl nalezen");
 						}
@@ -275,7 +275,7 @@ public class SubAppRunner {
 						int workID = sc.nextInt();
 						if (databaze.containsKey(workID) && databaze.get(workID) instanceof Student) {
 
-							((Teacher) databaze.get(IDUcitele)).deleteStudent(workID);
+							((Teacher) databaze.get(IDUcitele)).deleteStudent(String.valueOf(workID));
 							((Student) databaze.get(workID)).deleteTeacher(String.valueOf(IDUcitele));
 						} else {
 							System.out.println("src.entity.Ucitel nebyl nalezen");
