@@ -12,14 +12,14 @@ public class Student extends Person {
   List<Subject> subjectList = new ArrayList<>();
   List<Teacher> teacherList = new ArrayList<>();
 
-  public Student(Integer id, String name, String surname, Integer birthYear) {
+  public Student(String id, String name, String surname, Integer birthYear) {
     super(id, name, surname, birthYear, 0);
   }
 
 
-  public boolean checkTeacher(int checkID) {
+  public boolean checkTeacher(String checkID) {
     for (Teacher teacher : teacherList) {
-			if (teacher.getId() == checkID) {
+			if (teacher.getId().equals(checkID)) {
 				return true;
 			}
     }
@@ -82,9 +82,9 @@ public class Student extends Person {
     }
   }
 
-  public void deleteTeacher(int IDUcitele) {
+  public void deleteTeacher(String IDUcitele) {
     for (Teacher teacher : teacherList) {
-      if (teacher.getId() == IDUcitele) {
+      if (teacher.getId().equals(IDUcitele)) {
         this.teacherList.remove(teacher);
         break;
       }

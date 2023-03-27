@@ -8,15 +8,15 @@ public class Teacher extends Person {
   private int studentsWithStipend = 0;
   List<Student> studentList = new ArrayList<>();
 
-  public Teacher(Integer id, String name, String surname, Integer birthYear) {
+  public Teacher(String id, String name, String surname, Integer birthYear) {
     super(id, name, surname, birthYear, 10000);
   }
 
-  public boolean checkStudent(int id) {
+  public boolean checkStudent(String id) {
     for (Student student : studentList) {
-			if (student.getId() == id) {
-				return true;
-			}
+      if (student.getId().equals(id)) {
+        return true;
+      }
     }
 
     return false;
@@ -28,7 +28,7 @@ public class Teacher extends Person {
 
   public void deleteStudent(int studentID) {
     for (Student student : studentList) {
-      if (student.getId() == studentID) {
+      if (student.getId().equals(studentID)) {
         studentList.remove(student);
         break;
       }

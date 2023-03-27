@@ -2,13 +2,13 @@ package src.entity;
 
 public abstract class Person {
 
-  private Integer id;
+  private String id;
   private String name;
   private String surname;
   private Integer birthYear;
   private float salary;
 
-  public Person(Integer id, String name, String surname, Integer birthYear, float salary) {
+  public Person(String id, String name, String surname, Integer birthYear, float salary) {
     this.id = id;
     this.name = name;
     this.surname = surname;
@@ -16,11 +16,11 @@ public abstract class Person {
     this.salary = salary;
   }
 
-  public Integer getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(Integer id) {
+  public void setId(String id) {
     this.id = id;
   }
 

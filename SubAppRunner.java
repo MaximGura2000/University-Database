@@ -48,7 +48,7 @@ public class SubAppRunner {
             }
             rockNarozeni = sc.nextInt();
           }
-          Student student = new Student(idStudenta, newJmeno, newPrijmeni, rockNarozeni);
+          Student student = new Student(String.valueOf(idStudenta), newJmeno, newPrijmeni, rockNarozeni);
           System.out.println("Vyberte si jednoho ucitele. \n Seznam ucitelu");
           for (int uciteli : databaze.keySet()) {
 						if (databaze.get(uciteli) instanceof Teacher) {
@@ -64,7 +64,7 @@ public class SubAppRunner {
             IDUcitele = sc.nextInt();
           }
           student.addTeacher((Teacher) databaze.get(IDUcitele));
-          databaze.put(student.getId(), student);
+          databaze.put(Integer.decode(student.getId()), student);
           System.out.println("src.entity.Student byl ulozen do databazi s ID: " + student.getId());
           ((Teacher) databaze.get(IDUcitele)).addStudent(student);
           idStudenta++;
@@ -82,9 +82,9 @@ public class SubAppRunner {
             }
             rockNarozeni = sc.nextInt();
           }
-          Teacher teacher = new Teacher(idUcitele, newJmeno, newPrijmeni, rockNarozeni);
+          Teacher teacher = new Teacher(String.valueOf(idUcitele), newJmeno, newPrijmeni, rockNarozeni);
 
-          databaze.put(teacher.getId(), teacher);
+          databaze.put(Integer.decode(teacher.getId()), teacher);
           System.out.println("src.entity.Ucitel byl ulozen do databazi s ID: " + teacher.getId());
           idUcitele++;
           pocetUcitelu++;
@@ -103,7 +103,7 @@ public class SubAppRunner {
 						System.out.println(databaze.get(removeID).getName() + " " + databaze.get(removeID).getSurname() + " bude odstranen z databazi.");
 						if (databaze.get(removeID) instanceof Teacher) {
 							for (Student students : ((Teacher) databaze.get(removeID)).getStudentList()) {
-								students.deleteTeacher(removeID);
+								students.deleteTeacher(String.valueOf(removeID));
 							}
 						} else if (databaze.get(removeID) instanceof Student) {
 							for (Teacher teachers : ((Student) databaze.get(removeID)).getTeacherList()) {
@@ -163,7 +163,7 @@ public class SubAppRunner {
 						}
 						int IDUcitele = sc.nextInt();
 						if (databaze.containsKey(IDUcitele) && databaze.get(IDUcitele) instanceof Teacher) {
-							if (!((Student) databaze.get(workID)).checkTeacher(IDUcitele)) {
+							if (!((Student) databaze.get(workID)).checkTeacher(String.valueOf(IDUcitele))) {
 								((Student) databaze.get(workID)).addTeacher(((Teacher) databaze.get(IDUcitele)));
 								((Teacher) databaze.get(IDUcitele)).addStudent(((Student) databaze.get(workID)));
 								System.out.println("src.entity.Ucitel byl pridan ke studentovi");
@@ -197,7 +197,7 @@ public class SubAppRunner {
 						}
 						int workID = sc.nextInt();
 						if (databaze.containsKey(workID) && databaze.get(workID) instanceof Student) {
-							if (!((Teacher) databaze.get(IDUcitele)).checkStudent(workID)) {
+							if (!((Teacher) databaze.get(IDUcitele)).checkStudent(String.valueOf(workID))) {
 								((Student) databaze.get(workID)).addTeacher(((Teacher) databaze.get(IDUcitele)));
 								((Teacher) databaze.get(IDUcitele)).addStudent(((Student) databaze.get(workID)));
 								System.out.println("src.entity.Student byl pridan ke ucitelovi");
@@ -251,7 +251,7 @@ public class SubAppRunner {
 						}
 						int IDUcitele = sc.nextInt();
 						if (databaze.containsKey(IDUcitele) && databaze.get(IDUcitele) instanceof Teacher) {
-							((Student) databaze.get(workID)).deleteTeacher(IDUcitele);
+							((Student) databaze.get(workID)).deleteTeacher(String.valueOf(IDUcitele));
 							((Teacher) databaze.get(IDUcitele)).deleteStudent(workID);
 						} else {
 							System.out.println("src.entity.Ucitel nebyl nalezen");
@@ -276,7 +276,7 @@ public class SubAppRunner {
 						if (databaze.containsKey(workID) && databaze.get(workID) instanceof Student) {
 
 							((Teacher) databaze.get(IDUcitele)).deleteStudent(workID);
-							((Student) databaze.get(workID)).deleteTeacher(IDUcitele);
+							((Student) databaze.get(workID)).deleteTeacher(String.valueOf(IDUcitele));
 						} else {
 							System.out.println("src.entity.Ucitel nebyl nalezen");
 						}
