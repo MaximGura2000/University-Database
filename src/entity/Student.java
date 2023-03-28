@@ -34,7 +34,7 @@ public class Student extends Person {
     String subjectName = sc.next();
     boolean repeatSubject = false;
     for (Subject subject : subjectList) {
-			if (subject.getSubjectName().compareTo(subjectName) == 0) {
+			if (subject.getSubjectName().equals(subjectName)) {
 				repeatSubject = true;
 			}
     }

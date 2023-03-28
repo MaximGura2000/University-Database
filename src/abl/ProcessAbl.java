@@ -15,6 +15,7 @@ public class ProcessAbl {
 
   private static final Logger LOGGER = Logger.getLogger("ProcessAbl logger.");
   public static final String DELIMITER = "----------------------------------------";
+  // TODO add subject update for students
   private String textBlock = "\"1\" Add student."
       + "\n\"2\" Add teacher."
       + "\n\"3\" Remove person."
@@ -75,7 +76,13 @@ public class ProcessAbl {
           Student student = new Student(generateId(personMap), name, surname, birthYear);
 
           LOGGER.info("Choose teacher by id.");
-          // TODO add teacher list to view
+          List<Person> teacherList = personMap.entrySet().stream()
+              .filter(Teacher.class::isInstance)
+              .map(personMap::get)
+              .collect(Collectors.toList());
+          for (Person teacher: teacherList) {
+            LOGGER.info(teacher.getName() + " " + teacher.getSurname() + " : " + teacher.getId());
+          }
 
           int teacherId = -1;
 
@@ -87,10 +94,10 @@ public class ProcessAbl {
           }
 
           // Add teacher to student
-          student.addTeacher((Teacher) personMap.get(teacherId));
+          student.addTeacher((Teacher) personMap.get(String.valueOf(teacherId)));
 
           // Add student to teacher
-          ((Teacher) personMap.get(teacherId)).getStudentList().add(student);
+          ((Teacher) personMap.get(String.valueOf(teacherId))).getStudentList().add(student);
 
           // Add student to personMap
           personMap.put(student.getId(), student);
@@ -152,6 +159,23 @@ public class ProcessAbl {
             LOGGER.info("Person has successfully deleted");
           } else {
             LOGGER.info("No person with such id : " + removeID);
+          }
+
+          break;
+        }
+        case 4 : {
+          LOGGER.info("Print student`s id for adding subject");
+
+          while (!sc.hasNextInt()) {
+            sc.next();
+          }
+          String studentId = String.valueOf(sc.nextInt());
+
+          if (personMap.containsKey(studentId) && personMap.get(studentId) instanceof Student) {
+            ((Student) personMap.get(studentId)).addSubject();
+            LOGGER.info("Add new subject for student.");
+          } else {
+            LOGGER.info("No student with such id : " + studentId);
           }
 
           break;
