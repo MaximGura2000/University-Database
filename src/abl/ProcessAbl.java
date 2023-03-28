@@ -76,13 +76,8 @@ public class ProcessAbl {
           Student student = new Student(generateId(personMap), name, surname, birthYear);
 
           LOGGER.info("Choose teacher by id.");
-          List<Person> teacherList = personMap.entrySet().stream()
-              .filter(Teacher.class::isInstance)
-              .map(personMap::get)
-              .collect(Collectors.toList());
-          for (Person teacher: teacherList) {
-            LOGGER.info(teacher.getName() + " " + teacher.getSurname() + " : " + teacher.getId());
-          }
+
+          teacherListPrint(personMap);
 
           int teacherId = -1;
 
@@ -180,6 +175,52 @@ public class ProcessAbl {
 
           break;
         }
+        case 5 : {
+          LOGGER.info("Print student's id");
+
+          while (!sc.hasNextInt()) {
+            sc.next();
+          }
+          String studentId = String.valueOf(sc.nextInt());
+
+          if (personMap.containsKey(studentId) && personMap.get(studentId) instanceof Student) {
+            ((Student) personMap.get(studentId)).showSubject();
+          } else {
+            LOGGER.info("No student with such id : " + studentId);
+          }
+          break;
+        }
+        case 6 : {
+          LOGGER.info("Print student's id to add teacher.");
+
+          while (!sc.hasNextInt()) {
+            sc.next();
+          }
+          String studentId = String.valueOf(sc.nextInt());
+
+          if (personMap.containsKey(studentId) && personMap.get(studentId) instanceof Student) {
+            LOGGER.info("Choose one of the teacher.");
+            teacherListPrint(personMap);
+
+            while (!sc.hasNextInt()) {
+              sc.next();
+            }
+            String teacherId = String.valueOf(sc.nextInt());
+            if (personMap.containsKey(teacherId) && personMap.get(teacherId) instanceof Teacher) {
+              if (((Student) personMap.get(studentId)).checkTeacher(teacherId)) {
+                LOGGER.info("Student already study with this teacher.");
+                break;
+              }
+              addTeacherAndStudentLink(personMap, studentId, teacherId);
+              LOGGER.info("Student now have new Teacher.");
+            } else {
+              LOGGER.info("No teacher with such id : " + teacherId);
+            }
+          } else {
+            LOGGER.info("No student with such id : " + studentId);
+          }
+          break;
+        }
         case 17 : {
           LOGGER.info("Ending university process.");
           endProcess = true;
@@ -189,6 +230,21 @@ public class ProcessAbl {
           LOGGER.info("No such option with number: " + choice);
         }
       }
+    }
+  }
+
+  private void addTeacherAndStudentLink(Map<String, Person> personMap, String studentId, String teacherId) {
+    ((Teacher) personMap.get(teacherId)).addStudent((Student) personMap.get(studentId));
+    ((Student) personMap.get(studentId)).addTeacher((Teacher) personMap.get(teacherId));
+  }
+
+  private void teacherListPrint(Map<String, Person> personMap) {
+    List<Person> teacherList = personMap.entrySet().stream()
+        .filter(Teacher.class::isInstance)
+        .map(personMap::get)
+        .collect(Collectors.toList());
+    for (Person teacher: teacherList) {
+      LOGGER.info(teacher.getName() + " " + teacher.getSurname() + " : " + teacher.getId());
     }
   }
 
