@@ -10,11 +10,14 @@ import java.util.stream.Collectors;
 import src.entity.Person;
 import src.entity.Student;
 import src.entity.Teacher;
+import src.enums.StudentStatus;
 
 public class ProcessAbl {
 
   private static final Logger LOGGER = Logger.getLogger("ProcessAbl logger.");
   public static final String DELIMITER = "----------------------------------------";
+  public static final String NO_STUDENT_WITH_SUCH_ID = "No student with such id : ";
+  public static final String NO_TEACHER_WITH_SUCH_ID = "No teacher with such id : ";
   // TODO add subject update for students
   private String textBlock = "\"1\" Add student."
       + "\n\"2\" Add teacher."
@@ -32,7 +35,8 @@ public class ProcessAbl {
       + "\n\"14\" Person salary."
       + "\n\"15\" All salary payment."
       + "\n\"16\" Person info."
-      + "\n\"17\" End process.";
+      + "\n\"17\" Student subject update."
+      + "\n\"18\" End process.";
 
   public void processStart() {
     LOGGER.info("Start of application!");
@@ -74,6 +78,7 @@ public class ProcessAbl {
           }
           // Add student
           Student student = new Student(generateId(personMap), name, surname, birthYear);
+          student.setStudentStatus(StudentStatus.FIRST_YEAR);
 
           LOGGER.info("Choose teacher by id.");
 
@@ -170,7 +175,7 @@ public class ProcessAbl {
             ((Student) personMap.get(studentId)).addSubject();
             LOGGER.info("Add new subject for student.");
           } else {
-            LOGGER.info("No student with such id : " + studentId);
+            LOGGER.info(NO_STUDENT_WITH_SUCH_ID + studentId);
           }
 
           break;
@@ -186,7 +191,7 @@ public class ProcessAbl {
           if (personMap.containsKey(studentId) && personMap.get(studentId) instanceof Student) {
             ((Student) personMap.get(studentId)).showSubject();
           } else {
-            LOGGER.info("No student with such id : " + studentId);
+            LOGGER.info(NO_STUDENT_WITH_SUCH_ID + studentId);
           }
           break;
         }
@@ -214,14 +219,79 @@ public class ProcessAbl {
               addTeacherAndStudentLink(personMap, studentId, teacherId);
               LOGGER.info("Student now have new Teacher.");
             } else {
-              LOGGER.info("No teacher with such id : " + teacherId);
+              LOGGER.info(NO_TEACHER_WITH_SUCH_ID + teacherId);
             }
           } else {
-            LOGGER.info("No student with such id : " + studentId);
+            LOGGER.info(NO_STUDENT_WITH_SUCH_ID + studentId);
           }
           break;
         }
-        case 17 : {
+        case 7 : {
+          LOGGER.info("Print teacher's id to add student");
+
+          while (!sc.hasNextInt()) {
+            sc.next();
+          }
+          String teacherId = String.valueOf(sc.nextInt());
+
+          if (personMap.containsKey(teacherId) && personMap.get(teacherId) instanceof Teacher) {
+            LOGGER.info("Choose one of the students");
+            studentListPrint(personMap);
+
+            while (!sc.hasNextInt()) {
+              sc.next();
+            }
+            String studentId = String.valueOf(sc.nextInt());
+
+            if (personMap.containsKey(studentId) && personMap.get(studentId) instanceof Student) {
+              if (((Student) personMap.get(studentId)).checkTeacher(teacherId)) {
+                LOGGER.info("Student already study with this teacher.");
+                break;
+              }
+              addTeacherAndStudentLink(personMap, studentId, teacherId);
+              LOGGER.info("Teacher now have new student.");
+            } else {
+              LOGGER.info(NO_STUDENT_WITH_SUCH_ID + studentId);
+            }
+          } else {
+            LOGGER.info(NO_TEACHER_WITH_SUCH_ID + teacherId);
+          }
+          break;
+        }
+        case 8 : {
+          LOGGER.info("Print student id to view teacherList");
+
+          while (!sc.hasNextInt()) {
+            sc.next();
+          }
+          String studentId = String.valueOf(sc.nextInt());
+
+          if (personMap.containsKey(studentId) && personMap.get(studentId) instanceof Student) {
+            for (Teacher teacher: ((Student) personMap.get(studentId)).getTeacherList()) {
+              LOGGER.info(teacher.getName() + " " + teacher.getSurname() + " : " + teacher.getId() + ". Birth year: " + teacher.getBirthYear());
+            }
+          } else {
+            LOGGER.info(NO_STUDENT_WITH_SUCH_ID + studentId);
+          }
+          break;
+        }
+        case 9 : {
+          LOGGER.info("Print teacher id to view studentList");
+
+          while (!sc.hasNextInt()) {
+            sc.next();
+          }
+          String teacherId = String.valueOf(sc.nextInt());
+
+          if (personMap.containsKey(teacherId) && personMap.get(teacherId) instanceof Teacher) {
+            for (Student student: ((Teacher) personMap.get(teacherId)).getStudentList()) {
+              LOGGER.info(student.getName() + " " + student.getSurname() + " : " + student.getId() + ". Birth year: " + student.getBirthYear()
+              + ". Status: " + student.getStudentStatus());
+            }
+          }
+          break;
+        }
+        case 18 : {
           LOGGER.info("Ending university process.");
           endProcess = true;
           break;
@@ -243,8 +313,20 @@ public class ProcessAbl {
         .filter(Teacher.class::isInstance)
         .map(personMap::get)
         .collect(Collectors.toList());
+
     for (Person teacher: teacherList) {
       LOGGER.info(teacher.getName() + " " + teacher.getSurname() + " : " + teacher.getId());
+    }
+  }
+
+  private void studentListPrint(Map<String, Person> personMap) {
+    List<Person> studentList = personMap.entrySet().stream()
+        .filter(Student.class::isInstance)
+        .map(personMap::get)
+        .collect(Collectors.toList());
+
+    for (Person student: studentList) {
+      LOGGER.info(student.getName() + " " + student.getSurname() + " : " + student.getId());
     }
   }
 
