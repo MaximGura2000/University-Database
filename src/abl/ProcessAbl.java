@@ -19,7 +19,7 @@ public class ProcessAbl {
   public static final String NO_STUDENT_WITH_SUCH_ID = "No student with such id : ";
   public static final String NO_TEACHER_WITH_SUCH_ID = "No teacher with such id : ";
   // TODO add subject update for students
-  private String textBlock = "\"1\" Add student."
+  private static final String TEXT_BLOCK = "\"1\" Add student."
       + "\n\"2\" Add teacher."
       + "\n\"3\" Remove person."
       + "\n\"4\" Add subject to student."
@@ -48,7 +48,7 @@ public class ProcessAbl {
     while (!endProcess) {
       LOGGER.info(DELIMITER);
 
-      LOGGER.info(textBlock);
+      LOGGER.info(TEXT_BLOCK);
       LOGGER.info(DELIMITER);
 
       while(!sc.hasNextInt()) {
@@ -289,6 +289,80 @@ public class ProcessAbl {
               + ". Status: " + student.getStudentStatus());
             }
           }
+          break;
+        }
+        case 10 : {
+          LOGGER.info("Print student id to remove teacher.");
+
+          while (!sc.hasNextInt()) {
+            sc.next();
+          }
+          String studentId = String.valueOf(sc.nextInt());
+
+          if (personMap.containsKey(studentId) && personMap.get(studentId) instanceof Student) {
+            LOGGER.info("Choose one of teachers id:");
+            List<String> teacherInfoList = ((Student) personMap.get(studentId)).getTeacherList().stream().map(Teacher::toString).collect(Collectors.toList());
+            for (String teacher: teacherInfoList) {
+              LOGGER.info(teacher);
+            }
+
+            while (!sc.hasNextInt()) {
+              sc.next();
+            }
+            String teacherId = String.valueOf(sc.nextInt());
+
+            if (((Student) personMap.get(studentId)).getTeacherList().stream().map(Teacher::getId).collect(Collectors.toList()).contains(teacherId)) {
+              ((Student) personMap.get(studentId)).deleteTeacher(teacherId);
+              deleteStudentFromTeacher((Teacher) personMap.get(teacherId), studentId, ((Student) personMap.get(studentId)).isStipend());
+              LOGGER.info("Successful delete teacher from student.");
+            } else {
+             LOGGER.info("Student dont have teacher with such id.");
+            }
+          } else {
+            LOGGER.info("No student with such id");
+          }
+          break;
+        }
+        case 11 : {
+          LOGGER.info("Print teacher id to remove student.");
+
+          while (!sc.hasNextInt()) {
+            sc.next();
+          }
+          String teacherId = String.valueOf(sc.nextInt());
+
+          if (personMap.containsKey(teacherId) && personMap.get(teacherId) instanceof Teacher) {
+            LOGGER.info("Choose one of students id:");
+            List<String> studentInfoList = ((Teacher) personMap.get(teacherId)).getStudentList().stream().map(Student::toString).collect(Collectors.toList());
+            for (String student: studentInfoList) {
+              LOGGER.info(student);
+            }
+
+            while (!sc.hasNextInt()) {
+              sc.next();
+            }
+            String studentId = String.valueOf(sc.nextInt());
+
+            if (((Teacher) personMap.get(teacherId)).getStudentList().stream().map(Student::getId).collect(Collectors.toList()).contains(studentId)) {
+              ((Student) personMap.get(studentId)).deleteTeacher(teacherId);
+              deleteStudentFromTeacher((Teacher) personMap.get(teacherId), studentId, ((Student) personMap.get(studentId)).isStipend());
+              LOGGER.info("Successful delete student from teacher.");
+            } else {
+             LOGGER.info("Teacher dont have student with such id.");
+            }
+          } else {
+            LOGGER.info("No teacher with such id.");
+          }
+          break;
+        }
+        case 12 : {
+          LOGGER.info("Student list:");
+          studentListPrint(personMap);
+          break;
+        }
+        case 13 : {
+          LOGGER.info("Teacher list:");
+          teacherListPrint(personMap);
           break;
         }
         case 18 : {

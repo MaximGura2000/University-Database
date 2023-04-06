@@ -56,6 +56,11 @@ public class Teacher extends Person {
     return false;
   }
 
+  @Override
+  public String toString() {
+    return this.getName() + " " + this.getSurname() + ". Id: " + this.getId();
+  }
+
   public int getStudentsWithStipend() {
     return studentsWithStipend;
   }

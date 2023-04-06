@@ -49,7 +49,17 @@ public class Student extends Person {
 				}
 				mark = sc.nextInt();
 			}
-			Subject subject = new Subject(subjectName, mark);
+      // Subject credits
+      int credits = 0;
+      while (credits > 4 || credits < 1) {
+        System.out.println("Print credits");
+        while (!sc.hasNextInt()) {
+          sc.next();
+        }
+        credits = sc.nextInt();
+      }
+
+			Subject subject = new Subject(subjectName, mark, credits);
 			subjectList.add(subject);
 			subjectNumber++;
 			markNumber = markNumber + mark;
@@ -157,6 +167,11 @@ public class Student extends Person {
         && this.getSurname().equals(o.getSurname())
         && this.getId().equals(o.getId())
         && this.getBirthYear().equals(o.getBirthYear());
+  }
+
+  @Override
+  public String toString() {
+    return this.getName() + " " + this.getSurname() + ". Id:" + this.getId();
   }
 
   public void calculateSalary() {
