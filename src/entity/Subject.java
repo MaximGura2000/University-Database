@@ -35,4 +35,9 @@ public class Subject {
   public void setSubjectCredits(int subjectCredits) {
     this.subjectCredits = subjectCredits;
   }
+
+  @Override
+  public String toString() {
+    return "Subject: " + this.getSubjectName() + ", mark: " + this.getMark() + ". Credits: " + this.getSubjectCredits();
+  }
 }

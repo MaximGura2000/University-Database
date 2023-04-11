@@ -3,12 +3,14 @@ package src.abl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import src.entity.Person;
 import src.entity.Student;
+import src.entity.Subject;
 import src.entity.Teacher;
 import src.enums.StudentStatus;
 
@@ -18,7 +20,6 @@ public class ProcessAbl {
   public static final String DELIMITER = "----------------------------------------";
   public static final String NO_STUDENT_WITH_SUCH_ID = "No student with such id : ";
   public static final String NO_TEACHER_WITH_SUCH_ID = "No teacher with such id : ";
-  // TODO add subject update for students
   private static final String TEXT_BLOCK = "\"1\" Add student."
       + "\n\"2\" Add teacher."
       + "\n\"3\" Remove person."
@@ -36,7 +37,9 @@ public class ProcessAbl {
       + "\n\"15\" All salary payment."
       + "\n\"16\" Person info."
       + "\n\"17\" Student subject update."
-      + "\n\"18\" End process.";
+      + "\n\"18\" All person list."
+      + "\n\"19\" End process.";
+  public static final String NO_PERSON_WITH_SUCH_ID = "No person with such id: ";
 
   public void processStart() {
     LOGGER.info("Start of application!");
@@ -173,6 +176,7 @@ public class ProcessAbl {
 
           if (personMap.containsKey(studentId) && personMap.get(studentId) instanceof Student) {
             ((Student) personMap.get(studentId)).addSubject();
+            ((Student) personMap.get(studentId)).getTeacherList().forEach(Teacher::calculateSalary);
             LOGGER.info("Add new subject for student.");
           } else {
             LOGGER.info(NO_STUDENT_WITH_SUCH_ID + studentId);
@@ -288,6 +292,8 @@ public class ProcessAbl {
               LOGGER.info(student.getName() + " " + student.getSurname() + " : " + student.getId() + ". Birth year: " + student.getBirthYear()
               + ". Status: " + student.getStudentStatus());
             }
+          } else {
+            LOGGER.info(NO_TEACHER_WITH_SUCH_ID + teacherId);
           }
           break;
         }
@@ -319,7 +325,7 @@ public class ProcessAbl {
              LOGGER.info("Student dont have teacher with such id.");
             }
           } else {
-            LOGGER.info("No student with such id");
+            LOGGER.info(NO_STUDENT_WITH_SUCH_ID + studentId);
           }
           break;
         }
@@ -348,10 +354,10 @@ public class ProcessAbl {
               deleteStudentFromTeacher((Teacher) personMap.get(teacherId), studentId, ((Student) personMap.get(studentId)).isStipend());
               LOGGER.info("Successful delete student from teacher.");
             } else {
-             LOGGER.info("Teacher dont have student with such id.");
+             LOGGER.info("Teacher dont have student with such id: " + studentId);
             }
           } else {
-            LOGGER.info("No teacher with such id.");
+            LOGGER.info(NO_TEACHER_WITH_SUCH_ID + teacherId);
           }
           break;
         }
@@ -365,7 +371,124 @@ public class ProcessAbl {
           teacherListPrint(personMap);
           break;
         }
-        case 18 : {
+        case 14 : {
+          LOGGER.info("Print person id to view his salary.");
+
+          while (!sc.hasNextInt()) {
+            sc.next();
+          }
+          String personId = String.valueOf(sc.nextInt());
+
+          if (personMap.containsKey(personId)) {
+            if (personMap.get(personId) instanceof Student) {
+              Student student = (Student) personMap.get(personId);
+              if (student.isStipend()) {
+                student.calculateSalary();
+                LOGGER.info(student + ". Actual stipend: " + student.getSalary());
+              } else {
+                LOGGER.info(student + ". Doesn't have stipend.");
+              }
+            } else {
+              Teacher teacher = (Teacher) personMap.get(personId);
+              teacher.calculateSalary();
+              LOGGER.info(teacher + ". Actual salary " + teacher.getSalary() + ".\nStudent with stipend: " + teacher.getStudentsWithStipend());
+            }
+          } else {
+            LOGGER.info(NO_PERSON_WITH_SUCH_ID + personId);
+          }
+
+          break;
+        }
+        case 15 : {
+          int stipendSum = personMap.entrySet().stream().filter(Student.class::isInstance).mapToInt(student -> ((Student) student).getSalary()).sum();
+          int teacherSalarySum = personMap.entrySet().stream().filter(Teacher.class::isInstance).mapToInt(teacher -> ((Teacher) teacher).getSalary()).sum();
+          LOGGER.info("Total financial expenses:/nStipend: " + stipendSum + "/nSalary: " + teacherSalarySum + "/nTotal expenses: " + stipendSum + teacherSalarySum);
+          break;
+        }
+        case 16 : {
+          LOGGER.info("Print person id to view full information.");
+
+          while (!sc.hasNextInt()) {
+            sc.next();
+          }
+          String personId = String.valueOf(sc.nextInt());
+
+          if (personMap.containsKey(personId)) {
+            if (personMap.get(personId) instanceof Student) {
+              Student student = (Student) personMap.get(personId);
+              LOGGER.info(String.format("%s%nBirth year: %d. Salary: %d%nTeachers:%s%nSubjects :%s", student, student.getBirthYear(), student.getSalary(),
+                  student.getTeacherList().stream().map(Teacher::toString).collect(Collectors.joining("\n")),
+                  student.getSubjectList().stream().map(Subject::toString).collect(Collectors.joining("\n"))
+              ));
+            }
+            else {
+              Teacher teacher = (Teacher) personMap.get(personId);
+              LOGGER.info(String.format("%s%nBirth year: %d. Salary: %d%nStudents:%s%n", teacher, teacher.getBirthYear(), teacher.getSalary(),
+                  teacher.getStudentList().stream().map(Student::toString).collect(Collectors.joining("\n"))
+              ));
+            }
+          } else {
+            LOGGER.info(NO_PERSON_WITH_SUCH_ID + personId);
+          }
+          break;
+        }
+        case 17: {
+          LOGGER.info("Print student id to update subject.");
+          while (!sc.hasNextInt()) {
+            sc.next();
+          }
+          String studentId = String.valueOf(sc.nextInt());
+
+          if (personMap.containsKey(studentId) && personMap.get(studentId) instanceof Student) {
+            Student student = (Student) personMap.get(studentId);
+            List<Subject> subjectList = student.getSubjectList();
+
+            if (subjectList.isEmpty()) {
+              LOGGER.info("This student doesn't have any subject. Add some of them first.");
+              break;
+            }
+
+            LOGGER.info("Student subjects:\n" + subjectList.stream().map(Subject::toString).collect(Collectors.joining("\n")));
+            LOGGER.info("Print subject name to edit");
+            String subjectName = sc.next();
+
+            Optional<Subject> optionalSubject = subjectList.stream().filter(subject -> subjectName.equals(subject.getSubjectName())).findAny();
+
+            if (optionalSubject.isEmpty()) {
+              LOGGER.info("No subject with such name.");
+              break;
+            }
+
+            int mark = 0;
+            while (mark > 4 || mark < 1) {
+              LOGGER.info("Print new subject mark between 1 and 4:");
+              while (!sc.hasNextInt()) {
+                sc.next();
+              }
+              mark = sc.nextInt();
+            }
+
+            optionalSubject.get().setMark(mark);
+
+            checkStudentStatus(student);
+
+            float averageMark = (float) student.getSubjectList().stream().mapToInt(Subject::getMark).sum()/(float) student.getSubjectList().size();
+            LOGGER.info("Actual average mark is : " + averageMark);
+
+            student.setStipend(averageMark <= 2);
+
+            LOGGER.info(subjectName + " has successfully update.");
+          } else {
+            LOGGER.info(NO_STUDENT_WITH_SUCH_ID + studentId);
+          }
+          break;
+        }
+        case 18: {
+          studentListPrint(personMap);
+          teacherListPrint(personMap);
+          break;
+        }
+        case 19 : {
           LOGGER.info("Ending university process.");
           endProcess = true;
           break;
@@ -375,6 +498,8 @@ public class ProcessAbl {
         }
       }
     }
+    sc.close();
+    LOGGER.info(DELIMITER);
   }
 
   private void addTeacherAndStudentLink(Map<String, Person> personMap, String studentId, String teacherId) {
@@ -420,6 +545,19 @@ public class ProcessAbl {
     teacher.deleteStudent(removeId);
     if (stipend) {
       teacher.setStudentsWithStipend(teacher.getStudentsWithStipend() - 1);
+    }
+  }
+
+  private void checkStudentStatus(Student student) {
+    int creditsSum = student.getSubjectList().stream().filter(subject -> subject.getMark() < 3).mapToInt(Subject::getSubjectCredits).sum();
+    if (creditsSum < 60) {
+      student.setStudentStatus(StudentStatus.FIRST_YEAR);
+    } else if (creditsSum < 120) {
+      student.setStudentStatus(StudentStatus.SECOND_YEAR);
+    } else if (creditsSum < 180){
+      student.setStudentStatus(StudentStatus.THIRD_YEAR);
+    } else {
+      student.setStudentStatus(StudentStatus.GRADUATED);
     }
   }
 }

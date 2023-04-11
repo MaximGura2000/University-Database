@@ -176,7 +176,6 @@ public class Student extends Person {
 
   public void calculateSalary() {
 		if (this.isStipend()) {
-			System.out.println("Student ma dostatecny prumer, aby mel stipendium.");
 			this.setSalary((5 - this.getSalary()) * 1000);
 		} else {
 			System.out.println("Student ma prumer mene nez 2, a proto nema stipendium");

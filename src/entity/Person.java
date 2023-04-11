@@ -6,14 +6,14 @@ public abstract class Person {
   private String name;
   private String surname;
   private Integer birthYear;
-  private float salary;
+  private int salary;
 
-  public Person(String id, String name, String surname, Integer birthYear, float salary) {
+  public Person(String id, String name, String surname, Integer birthYear, int salary) {
     this.id = id;
     this.name = name;
     this.surname = surname;
     this.birthYear = birthYear;
-    this.salary = salary;
+    this.salary =  salary;
   }
 
   public String getId() {
@@ -48,11 +48,11 @@ public abstract class Person {
     this.birthYear = birthYear;
   }
 
-  public float getSalary() {
+  public int getSalary() {
     return salary;
   }
 
-  public void setSalary(float salary) {
+  public void setSalary(int salary) {
     this.salary = salary;
   }
 
