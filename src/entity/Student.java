@@ -41,6 +41,8 @@ public class Student extends Person {
 		if (repeatSubject) {
 			System.out.println("src.entity.Student uz takovy predmet ma.");
 		} else {
+      //TODO remove mark choose
+      //int mark = 4;
 			int mark = 0;
 			while (mark > 4 || mark < 1) {
 				System.out.println("Zadejte znamku predmeta mezi 1 a 4");
@@ -51,8 +53,8 @@ public class Student extends Person {
 			}
       // Subject credits
       int credits = 0;
-      while (credits > 4 || credits < 1) {
-        System.out.println("Print credits");
+      while (credits > 6 || credits < 1) {
+        System.out.println("Print credits between 1 and 6");
         while (!sc.hasNextInt()) {
           sc.next();
         }
