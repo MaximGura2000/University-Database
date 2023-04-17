@@ -1,11 +1,13 @@
 package src;
 
+import java.security.NoSuchAlgorithmException;
 import src.abl.ProcessAbl;
 
 public class SubAppRunner {
 
-  public static void main(String[] args) {
-    ProcessAbl processAbl = new ProcessAbl();
+  private static ProcessAbl processAbl = new ProcessAbl();
+
+  public static void main(String[] args) throws NoSuchAlgorithmException {
     processAbl.processStart();
   }
 }

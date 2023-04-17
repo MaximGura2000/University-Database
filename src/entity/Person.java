@@ -55,6 +55,4 @@ public abstract class Person {
   public void setSalary(int salary) {
     this.salary = salary;
   }
-
-  public abstract boolean equals(Student o);
 }
