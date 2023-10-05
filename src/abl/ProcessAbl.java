@@ -20,7 +20,7 @@ public class ProcessAbl {
     
     loggerHelper.loggerSetting(LOGGER);
 
-    LOGGER.info("Start of application!");
+
     boolean endProcess = false;
 
     Map<String, Person> personMap = new HashMap<>();
