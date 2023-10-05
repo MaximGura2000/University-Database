@@ -63,13 +63,7 @@ public class ProcessHelper {
     LOGGER.info("Surname :");
     String surname = sc.next();
     int birthYear = 0;
-    while (birthYear > 2005 || birthYear < 1990) {
-      LOGGER.info("Students birth year must be higher than 1990 and less than 2005. Print valid birthYear");
-      while (!sc.hasNextInt()) {
-        sc.next();
-      }
-      birthYear = sc.nextInt();
-    }
+
     // Add student
     Student student = new Student(generateId(personMap), name, surname, birthYear);
     student.setStudentStatus(StudentStatus.FIRST_YEAR);
