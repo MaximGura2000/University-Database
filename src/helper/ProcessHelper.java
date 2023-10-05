@@ -261,7 +261,7 @@ public class ProcessHelper {
   
   public void studentTeacherList(Map<String, Person> personMap) {
     studentListPrint(personMap);
-    LOGGER.info("Print student id to view teacherList");
+
 
     while (!sc.hasNextInt()) {
       sc.next();
